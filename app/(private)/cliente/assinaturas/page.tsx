@@ -45,7 +45,7 @@ export default function AssinaturaPage() {
               </p>
               <div className="mt-4">
                 <Button
-                  className="bg-stone-600 hover:bg-stone-700"
+                  className="bg-sky-600 hover:bg-sky-700"
                   onClick={handleChoosePlan}
                 >
                   Escolher Plano
@@ -96,7 +96,7 @@ export default function AssinaturaPage() {
                 </div>
                 <Button
                   type="submit"
-                  className="w-full bg-stone-600 hover:bg-stone-700"
+                  className="w-full bg-sky-600 hover:bg-sky-700"
                 >
                   Salvar Forma de Pagamento
                 </Button>
@@ -120,7 +120,7 @@ export default function AssinaturaPage() {
               </p>
               <div className="mt-4 flex space-x-4">
                 <Button
-                  className="bg-stone-600 hover:bg-stone-700"
+                  className="bg-sky-600 hover:bg-sky-700"
                   onClick={handleChoosePlan}
                 >
                   Alterar Plano

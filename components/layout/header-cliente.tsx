@@ -12,6 +12,7 @@ import {
 import { CalendarClock, ChevronDown, LogOut, Scissors , CreditCard} from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function HeaderCliente() {
   const pathname = usePathname();
@@ -34,7 +35,14 @@ export default function HeaderCliente() {
         <div className="h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/cliente/agendamentos" className="flex items-center space-x-2">
-            <span className="font-bold text-xl">Passcut</span>
+            <Image
+              src="/imagens/logo.png"
+              alt="Logo"
+              width={36}
+              height={36}
+              className="h-9 w-9"
+              priority
+            />
           </Link>
 
           {/* Desktop Navigation */}

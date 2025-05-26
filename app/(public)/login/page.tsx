@@ -26,22 +26,20 @@ export default function LoginPage() {
 
       const res = await fetch(ENDPOINT, {
         method: "POST",
-        credentials: "include",           // envia cookies HttpOnly
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": FERNET_TOKEN,  // Fernet no header
+          "Authorization": FERNET_TOKEN,
         },
         body: JSON.stringify({ login: email, senha }),
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        toast({ title: data.message, variant: "destructive" });
-        return;
+      if (res.status === 200) {
+        router.push("/cliente/agendamentos");
+      } else {
+        toast({ title: data.message || "Erro ao fazer login.", variant: "destructive" });
       }
-
-      // Tudo ok: o cookie `token_user` já foi gravado automaticamente
-      router.push("/cliente/agendamentos");
     } catch (err) {
       console.error(err);
       toast({ title: "Erro no servidor, tente novamente.", variant: "destructive" });
@@ -55,7 +53,7 @@ export default function LoginPage() {
       <Card className="max-w-md w-full">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-            <Mail className="h-6 w-6 text-stone-900" />
+            <Mail className="h-6 w-6 text-sky-900" />
           </div>
           <CardTitle className="text-2xl">Bem-vindo ao Passcut</CardTitle>
           <CardDescription>Faça login para acessar sua conta</CardDescription>
@@ -98,7 +96,7 @@ export default function LoginPage() {
             </div>
 
             <Button
-              className="w-full bg-stone-600 hover:bg-stone-700"
+              className="w-full bg-sky-600 hover:bg-sky-700"
               onClick={handleLogin}
               disabled={loading}
             >

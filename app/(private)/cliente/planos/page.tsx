@@ -46,7 +46,7 @@ const PlanosPage = () => {
               <h2 className="text-xl font-semibold">{plano.nome}</h2>
               <p className="text-gray-600">{plano.descricao}</p>
               <p className="text-lg font-bold mt-2">{plano.preco}</p>
-              <button className="mt-4 bg-stone-500 text-white px-4 py-2 rounded hover:bg-stone-600">
+              <button className="mt-4 bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600">
                 Assinar
               </button>
             </div>

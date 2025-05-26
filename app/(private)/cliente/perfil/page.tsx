@@ -74,7 +74,7 @@ export default function PerfilPage() {
 
   return (
     <div className="p-4">
-      <Card className="border-l-4 border-l-stone-900">
+      <Card className="border-l-4 border-l-sky-900">
         <CardHeader>
           <CardTitle>Perfil do Usuário</CardTitle>
           <CardDescription>
@@ -272,7 +272,7 @@ export default function PerfilPage() {
         </CardFooter>
       </Card>
 
-      {message && <p className="text-sm text-stone-800 mt-4">{message}</p>}
+      {message && <p className="text-sm text-sky-800 mt-4">{message}</p>}
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogContent>

@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 import { CalendarIcon, Check, ChevronRight, Clock, ShoppingCart, User } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Mock data
 const servicos = [
@@ -54,7 +54,7 @@ const profissionais = [
     cargo: "Barbeiro Master",
     experiencia: "10 anos",
     disponivel: true,
-    avatar: "https://demo-source.imgix.net/bucket_hat.jpg?fit=max&w=1584&h=311.375&dpr=1&q=75&auto=format%2Ccompress&cacheID=3430656240"
+    avatar: "https://demo-source.imgix.net/head_shot.jpg?fit=max&w=1584&h=311.375&dpr=1&q=75&auto=format%2Ccompress&cacheID=3434649284"
   },
   {
     id: 2,
@@ -66,22 +66,6 @@ const profissionais = [
   }
 ];
 
-const horariosDisponiveis = [
-  { id: 1, hora: "09:00", disponivel: true },
-  { id: 2, hora: "09:30", disponivel: true },
-  { id: 3, hora: "10:00", disponivel: false },
-  { id: 4, hora: "10:30", disponivel: true },
-  { id: 5, hora: "11:00", disponivel: true },
-  { id: 6, hora: "11:30", disponivel: false },
-  { id: 7, hora: "14:00", disponivel: true },
-  { id: 8, hora: "14:30", disponivel: true },
-  { id: 9, hora: "15:00", disponivel: true },
-  { id: 10, hora: "15:30", disponivel: false },
-  { id: 11, hora: "16:00", disponivel: true },
-  { id: 12, hora: "16:30", disponivel: true },
-  { id: 13, hora: "17:00", disponivel: true },
-];
-
 export default function AgendarPage() {
   const router = useRouter();
   const [etapa, setEtapa] = useState<"servico" | "profissional" | "data" | "confirmacao">("servico");
@@ -90,6 +74,51 @@ export default function AgendarPage() {
   const [dataSelecionada, setDataSelecionada] = useState<string>("");
   const [horarioSelecionado, setHorarioSelecionado] = useState<any>(null);
   const [confirmarDialogAberto, setConfirmarDialogAberto] = useState(false);
+  const [horariosDisponiveis, setHorariosDisponiveis] = useState<any[]>([]);
+  const AUTH_TOKEN = "gAAAAABoM7n7ETcN-piSP0jan1HVMuaa4clZwcjdK1QtIK3YZVuPZXNWxAej1MMOlhWiYwt9NxidOC2cnpk_JsOIn-wHy1yit0HeXZFy78S7p4nDzGmK18y15wwijwS9_bbvbbqLZikzK5F8ezjNvesyZ3kqOqpedMsnzpvXNxXAg5-o4p6KjbtZdAPzYQ5LxaYAhLoqO9T3"; // Troque pelo token correto
+
+  useEffect(() => {
+    const buscarHorarios = async () => {
+      if (!dataSelecionada || !profissionalSelecionado || !servicoSelecionado) {
+        setHorariosDisponiveis([]);
+        return;
+      }
+
+      try {
+        const res = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/consultar-horarios", {
+          method: "POST",
+          credentials: "include", // envia cookies HttpOnly
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "gAAAAABoM7n7ETcN-piSP0jan1HVMuaa4clZwcjdK1QtIK3YZVuPZXNWxAej1MMOlhWiYwt9NxidOC2cnpk_JsOIn-wHy1yit0HeXZFy78S7p4nDzGmK18y15wwijwS9_bbvbbqLZikzK5F8ezjNvesyZ3kqOqpedMsnzpvXNxXAg5-o4p6KjbtZdAPzYQ5LxaYAhLoqO9T3",
+          },
+          body: JSON.stringify({
+            servicos: "5a7e3f8d-1234-4abc-9876-9f1234567890",
+            colaborador_id: "5a7e3f8d-1234-4abc-9876-9f1234567890",
+            data: "2025-05-26",
+          }),
+        });
+
+        const data = await res.json();
+        if (res.status === 200 && data.horarios) {
+          // data.horarios é um array de strings "HH:MM:SS"
+          setHorariosDisponiveis(
+            data.horarios.map((h: string, idx: number) => ({
+              id: idx + 1,
+              hora: h.slice(0, 5),
+              disponivel: true,
+            }))
+          );
+        } else {
+          setHorariosDisponiveis([]);
+        }
+      } catch (err) {
+        setHorariosDisponiveis([]);
+      }
+    };
+
+    buscarHorarios();
+  }, [dataSelecionada, profissionalSelecionado, servicoSelecionado]);
   
   // Next step
   const avancarEtapa = () => {
@@ -130,15 +159,15 @@ export default function AgendarPage() {
       
       {/* Progress steps */}
       <div className="flex items-center mb-8">
-        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${etapa === "servico" ? "bg-stone-600 text-white" : "bg-stone-100 text-stone-700"}`}>
+        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${etapa === "servico" ? "bg-sky-600 text-white" : "bg-sky-100 text-sky-700"}`}>
           1
         </div>
-        <div className={`flex-1 h-1 mx-2 ${etapa === "servico" ? "bg-gray-200" : "bg-stone-300"}`}></div>
-        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${etapa === "profissional" ? "bg-stone-600 text-white" : etapa === "data" || etapa === "confirmacao" ? "bg-stone-100 text-stone-700" : "bg-gray-100 text-gray-400"}`}>
+        <div className={`flex-1 h-1 mx-2 ${etapa === "servico" ? "bg-gray-200" : "bg-sky-300"}`}></div>
+        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${etapa === "profissional" ? "bg-sky-600 text-white" : etapa === "data" || etapa === "confirmacao" ? "bg-sky-100 text-sky-700" : "bg-gray-100 text-gray-400"}`}>
           2
         </div>
-        <div className={`flex-1 h-1 mx-2 ${etapa === "servico" || etapa === "profissional" ? "bg-gray-200" : "bg-stone-300"}`}></div>
-        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${etapa === "data" ? "bg-stone-600 text-white" : etapa === "confirmacao" ? "bg-stone-100 text-stone-700" : "bg-gray-100 text-gray-400"}`}>
+        <div className={`flex-1 h-1 mx-2 ${etapa === "servico" || etapa === "profissional" ? "bg-gray-200" : "bg-sky-300"}`}></div>
+        <div className={`flex items-center justify-center w-8 h-8 rounded-full ${etapa === "data" ? "bg-sky-600 text-white" : etapa === "confirmacao" ? "bg-sky-100 text-sky-700" : "bg-gray-100 text-gray-400"}`}>
           3
         </div>
       </div>
@@ -153,7 +182,7 @@ export default function AgendarPage() {
                 key={servico.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
                   servicoSelecionado?.id === servico.id 
-                    ? "border-2 border-stone-500" 
+                    ? "border-2 border-sky-500" 
                     : ""
                 }`}
                 onClick={() => setServicoSelecionado(servico)}
@@ -173,8 +202,8 @@ export default function AgendarPage() {
                       <div className="flex justify-between items-start">
                         <CardTitle>{servico.nome}</CardTitle>
                         {servicoSelecionado?.id === servico.id && (
-                          <div className="h-6 w-6 rounded-full bg-stone-100 flex items-center justify-center">
-                            <Check className="h-4 w-4 text-stone-600" />
+                          <div className="h-6 w-6 rounded-full bg-sky-100 flex items-center justify-center">
+                            <Check className="h-4 w-4 text-sky-600" />
                           </div>
                         )}
                       </div>
@@ -201,7 +230,7 @@ export default function AgendarPage() {
             <Button 
               onClick={avancarEtapa}
               disabled={!servicoSelecionado}
-              className="bg-stone-600 hover:bg-stone-700"
+              className="bg-sky-600 hover:bg-sky-700"
             >
               Continuar <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
@@ -219,7 +248,7 @@ export default function AgendarPage() {
                 key={profissional.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
                   profissionalSelecionado?.id === profissional.id 
-                    ? "border-2 border-stone-500" 
+                    ? "border-2 border-sky-500" 
                     : ""
                 }`}
                 onClick={() => setProfissionalSelecionado(profissional)}
@@ -231,20 +260,20 @@ export default function AgendarPage() {
                       alt={profissional.nome}
                       width={80}
                       height={80}
-                      className="object-cover h-full rounded-full"
+                      className="object-cover w-full h-full rounded-full"
                     />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold">{profissional.nome}</h3>
                     <p className="text-sm text-gray-500">{profissional.cargo}</p>
                     <p className="text-sm text-gray-500">Experiência: {profissional.experiencia}</p>
-                    <Badge className="mt-2 bg-stone-100 text-stone-800 hover:bg-stone-200">
+                    <Badge className="mt-2 bg-sky-100 text-sky-800 hover:bg-sky-200">
                       Disponível hoje
                     </Badge>
                   </div>
                   {profissionalSelecionado?.id === profissional.id && (
-                    <div className="h-8 w-8 rounded-full bg-stone-100 flex items-center justify-center">
-                      <Check className="h-5 w-5 text-stone-600" />
+                    <div className="h-8 w-8 rounded-full bg-sky-100 flex items-center justify-center">
+                      <Check className="h-5 w-5 text-sky-600" />
                     </div>
                   )}
                 </div>
@@ -262,7 +291,7 @@ export default function AgendarPage() {
             <Button 
               onClick={avancarEtapa}
               disabled={!profissionalSelecionado}
-              className="bg-stone-600 hover:bg-stone-700"
+              className="bg-sky-600 hover:bg-sky-700"
             >
               Continuar <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
@@ -297,7 +326,7 @@ export default function AgendarPage() {
                         key={index}
                         variant={dataSelecionada === fullDateStr ? "default" : "outline"}
                         className={`flex flex-col h-16 ${
-                          dataSelecionada === fullDateStr ? "bg-stone-600 hover:bg-stone-700" : ""
+                          dataSelecionada === fullDateStr ? "bg-sky-600 hover:bg-sky-700" : ""
                         }`}
                         onClick={() => {
                           setDataSelecionada(fullDateStr);
@@ -341,7 +370,7 @@ export default function AgendarPage() {
                           variant={horarioSelecionado?.id === horario.id ? "default" : "outline"}
                           className={
                             horarioSelecionado?.id === horario.id
-                              ? "bg-stone-600 hover:bg-stone-700"
+                              ? "bg-sky-600 hover:bg-sky-700"
                               : ""
                           }
                           disabled={!horario.disponivel}
@@ -371,7 +400,7 @@ export default function AgendarPage() {
             <Button 
               onClick={avancarEtapa}
               disabled={!dataSelecionada || !horarioSelecionado}
-              className="bg-stone-600 hover:bg-stone-700"
+              className="bg-sky-600 hover:bg-sky-700"
             >
               Finalizar Agendamento <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
@@ -442,7 +471,7 @@ export default function AgendarPage() {
               Voltar
             </Button>
             <Button 
-              className="bg-stone-600 hover:bg-stone-700"
+              className="bg-sky-600 hover:bg-sky-700"
               onClick={confirmarAgendamento}
             >
               Confirmar Agendamento

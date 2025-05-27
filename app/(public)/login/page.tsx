@@ -17,9 +17,11 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
+  const [erroLogin, setErroLogin] = useState("");
 
   const handleLogin = async () => {
     setLoading(true);
+    setErroLogin("");
     try {
       const ENDPOINT = "https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/api/autenticar_user";
       const FERNET_TOKEN = "gAAAAABoMq5-Akg8Nzut-mkdgopFmlHbDtamCEA4NPGLRM4etW0z37hQFf7sGCpN13FJtZwR8deTONj0LkgAr2X2ch2Sdx1CNL8dId8CGR_6xclXZXd24jaaPZKyl-yb6wFgWj2TIuzFya95MxsOJhL1Ivdr-OUILATCMlWviAgCnQ-s2vRcI61dTzVkupDOKgK1ULUhlPRlZRaBLuCNSxbpIECUuiGmSw==";
@@ -38,10 +40,12 @@ export default function LoginPage() {
       if (res.status === 200) {
         router.push("/cliente/agendamentos");
       } else {
+        setErroLogin(data.message || "Email ou senha incorretos."); // Mostra mensagem de erro
         toast({ title: data.message || "Erro ao fazer login.", variant: "destructive" });
       }
     } catch (err) {
       console.error(err);
+      setErroLogin("Erro no servidor, tente novamente.");
       toast({ title: "Erro no servidor, tente novamente.", variant: "destructive" });
     } finally {
       setLoading(false);
@@ -49,12 +53,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="max-w-md w-full">
+     <div className="min-h-screen flex items-center justify-center bg-white p-4">
+      <Card className="max-w-md w-full bg-white text-stone-900">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-            <Mail className="h-6 w-6 text-sky-900" />
-          </div>
+          <img
+            src="https://raw.githubusercontent.com/RxTaylin/icon/refs/heads/main/PASS%20CUT%20LOGO%20PNG%20OFC.png"
+            alt="Logo Passcut"
+            width={100}
+            height={100}
+            className="mx-auto mb-1"
+          />
           <CardTitle className="text-2xl">Bem-vindo ao Passcut</CardTitle>
           <CardDescription>Faça login para acessar sua conta</CardDescription>
         </CardHeader>
@@ -65,7 +73,7 @@ export default function LoginPage() {
               <Label htmlFor="email">Email</Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-4 w-4 text-gray-400" />
+                  <Mail className="h-4 w-4 text-stone-950" />
                 </div>
                 <Input
                   id="email"
@@ -82,7 +90,7 @@ export default function LoginPage() {
               <Label htmlFor="senha">Senha</Label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-4 w-4 text-gray-400" />
+                  <Lock className="h-4 w-4 text-stone-950" />
                 </div>
                 <Input
                   id="senha"
@@ -94,13 +102,19 @@ export default function LoginPage() {
                 />
               </div>
             </div>
+            
+            {erroLogin && (
+              <div className="text-red-500 text-center text-sm font-medium">
+                {erroLogin}
+              </div>
+            )}
 
             <Button
               className="w-full bg-sky-600 hover:bg-sky-700"
               onClick={handleLogin}
               disabled={loading}
             >
-              {loading ? "Entrando..." : "Entrar como Cliente"}
+              {loading ? "Entrando..." : "Entrar"}
             </Button>
           </div>
         </CardContent>

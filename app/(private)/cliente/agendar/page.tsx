@@ -15,15 +15,17 @@ import { Calendar } from "@/components/ui/calendar";
 // Remova o array servicos mockado
 
 const imagensServicos = [
-  "https://images.pexels.com/photos/1319461/pexels-photo-1319461.jpeg",
+  "https://images.pexels.com/photos/1570807/pexels-photo-1570807.jpeg",
   "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg",
+  "https://images.pexels.com/photos/1319461/pexels-photo-1319461.jpeg",
   "https://images.pexels.com/photos/1805600/pexels-photo-1805600.jpeg",
-  "https://images.pexels.com/photos/1570807/pexels-photo-1570807.jpeg"
 ];
 
 const imagensColaboradores = [
-  "https://demo-source.imgix.net/bucket_hat.jpg?fit=max&w=1584&h=311.375&dpr=1&q=75&auto=format%2Ccompress",
-  "https://demo-source.imgix.net/head_shot.jpg?fit=max&w=1584&h=311.375&dpr=1&q=75&auto=format%2Ccompress"
+  "https://raw.githubusercontent.com/RxTaylin/icon/refs/heads/main/WhatsApp%20Image%202025-05-27%20at%2019.26.01.jpeg",
+  "https://raw.githubusercontent.com/RxTaylin/icon/refs/heads/main/WhatsApp%20Image%202025-05-27%20at%2019.26.38.jpeg",
+  "https://ead.graup.com.br/images/courses/barbeiro-profissional.jpg?=1714855146",
+  "https://nucleocursos.com.br/blog/wp-content/uploads/2023/08/curso-de-barbeiro-em-Blumenau.jpg"
 ];
 
 export default function AgendarPage() {
@@ -34,7 +36,7 @@ export default function AgendarPage() {
   const [servicoIdSelecionado, setServicoIdSelecionado] = useState<string | null>(null); // Novo estado
   const [profissionalSelecionado, setProfissionalSelecionado] = useState<any>(null);
   const [profissionalIdSelecionado, setProfissionalIdSelecionado] = useState<string | null>(null); // Novo estado
-  const [dataSelecionada, setDataSelecionada] = useState<string>("");
+  const [dataSelecionada, setDataSelecionada] = useState<Date | null>(null);
   const [horarioSelecionado, setHorarioSelecionado] = useState<any>(null);
   const [confirmarDialogAberto, setConfirmarDialogAberto] = useState(false);
   const [horariosDisponiveis, setHorariosDisponiveis] = useState<any[]>([]);
@@ -81,9 +83,8 @@ export default function AgendarPage() {
         return;
       }
 
-      // Converte dataSelecionada (dd/mm/yyyy) para yyyy-mm-dd
-      const [dia, mes, ano] = dataSelecionada.split('/');
-      const dataFormatada = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+      // Formata data para yyyy-mm-dd
+      const dataFormatada = dataSelecionada.toISOString().split('T')[0];
 
       try {
         const res = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/consultar-horarios", {
@@ -146,9 +147,7 @@ export default function AgendarPage() {
   const confirmarAgendamento = async () => {
     if (!servicoSelecionado || !profissionalSelecionado || !dataSelecionada || !horarioSelecionado) return;
 
-    // Converte dataSelecionada (dd/mm/yyyy) para yyyy-mm-dd
-    const [dia, mes, ano] = dataSelecionada.split('/');
-    const dataFormatada = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+    const dataFormatada = dataSelecionada.toISOString().split('T')[0];
     // Garante formato HH:MM:SS
     const horarioFormatado = horarioSelecionado.hora.length === 5 ? `${horarioSelecionado.hora}:00` : horarioSelecionado.hora;
 
@@ -172,7 +171,7 @@ export default function AgendarPage() {
         // Limpa os dados e redireciona
         setServicoSelecionado(null);
         setProfissionalSelecionado(null);
-        setDataSelecionada("");
+        setDataSelecionada(null);
         setHorarioSelecionado(null);
         setConfirmarDialogAberto(false);
         router.push("/cliente/agendamentos");
@@ -250,7 +249,7 @@ export default function AgendarPage() {
                 key={servico.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
                   servicoSelecionado?.id === servico.id 
-                    ? "border-2 border-stone-500" 
+                    ? "border-2 border-sky-500" 
                     : ""
                 }`}
                 onClick={() => setServicoSelecionado(servico)}
@@ -271,7 +270,7 @@ export default function AgendarPage() {
                         <CardTitle>{servico.nome}</CardTitle>
                         {servicoSelecionado?.id === servico.id && (
                           <div className="h-6 w-6 rounded-full bg-stone-100 flex items-center justify-center">
-                            <Check className="h-4 w-4 text-stone-600" />
+                            <Check className="h-4 w-4 text-sky-600" />
                           </div>
                         )}
                       </div>
@@ -310,13 +309,14 @@ export default function AgendarPage() {
       {etapa === "profissional" && (
         <div className="animate-in slide-in-from-right">
           <h2 className="text-xl font-semibold mb-4">Escolha o profissional</h2>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {colaboradores.map((profissional) => (
               <Card 
                 key={profissional.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
                   profissionalSelecionado?.id === profissional.id 
-                    ? "border-2 border-stone-500" 
+                    ? "border-2 border-sky-500" 
                     : ""
                 }`}
                 onClick={() => setProfissionalSelecionado(profissional)}
@@ -333,13 +333,10 @@ export default function AgendarPage() {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold">{profissional.nome}</h3>
-                    <Badge className="mt-2 bg-stone-100 text-stone-800 hover:bg-stone-200">
-                      Disponível hoje
-                    </Badge>
                   </div>
                   {profissionalSelecionado?.id === profissional.id && (
                     <div className="h-8 w-8 rounded-full bg-stone-100 flex items-center justify-center">
-                      <Check className="h-5 w-5 text-stone-600" />
+                      <Check className="h-5 w-5 text-sky-600" />
                     </div>
                   )}
                 </div>
@@ -379,14 +376,10 @@ export default function AgendarPage() {
               <CardContent>
                 <Calendar
                   mode="single"
-                  selected={dataSelecionada ? new Date(dataSelecionada.split('/').reverse().join('-')) : undefined}
+                  selected={dataSelecionada ?? undefined}
                   onSelect={(date) => {
-                    if (date) {
-                      // Formata para dd/mm/yyyy
-                      const formatted = date.toLocaleDateString('pt-BR');
-                      setDataSelecionada(formatted);
-                      setHorarioSelecionado(null);
-                    }
+                    setDataSelecionada(date ?? null);
+                    setHorarioSelecionado(null);
                   }}
                   fromDate={new Date()}
                   className="rounded-md border"
@@ -394,7 +387,7 @@ export default function AgendarPage() {
                 <div className="mt-4">
                   <div className="flex items-center text-gray-500 text-sm">
                     <CalendarIcon className="h-4 w-4 mr-2" />
-                    Data selecionada: {dataSelecionada || "Nenhuma"}
+                    Data selecionada: {dataSelecionada ? dataSelecionada.toLocaleDateString('pt-BR') : "Nenhuma"}
                   </div>
                 </div>
               </CardContent>
@@ -406,7 +399,7 @@ export default function AgendarPage() {
                 <CardTitle className="text-lg">Selecione o horário</CardTitle>
                 <CardDescription>
                   {dataSelecionada 
-                    ? `Horários disponíveis para ${dataSelecionada}`
+                    ? `Horários disponíveis para ${dataSelecionada.toLocaleDateString('pt-BR')}`
                     : "Selecione uma data para ver os horários disponíveis"
                   }
                 </CardDescription>
@@ -498,7 +491,7 @@ export default function AgendarPage() {
               <div>
                 <h4 className="font-medium">Data e Horário</h4>
                 <p className="text-sm text-gray-500">
-                  {dataSelecionada} às {horarioSelecionado?.hora}
+                  {dataSelecionada ? dataSelecionada.toLocaleDateString('pt-BR') : ""} às {horarioSelecionado?.hora}
                 </p>
               </div>
             </div>

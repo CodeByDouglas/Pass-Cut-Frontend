@@ -31,26 +31,6 @@
       "static/chunks/main-app.js",
       "static/css/app/(private)/cliente/agendar/page.css",
       "static/chunks/app/(private)/cliente/agendar/page.js"
-    ],
-    "/(private)/cliente/assinaturas/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(private)/cliente/assinaturas/page.js"
-    ],
-    "/(private)/cliente/planos/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(private)/cliente/planos/page.js"
-    ],
-    "/(private)/cliente/perfil/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(private)/cliente/perfil/page.js"
-    ],
-    "/_not-found/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
     ]
   }
 }

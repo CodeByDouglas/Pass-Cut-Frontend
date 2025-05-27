@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarDays, CalendarPlus, Clock, MapPin, Scissors, UserCheck } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Agendamento {
   id: string;
@@ -24,6 +25,7 @@ export default function AgendamentosPage() {
   const [agendamentosAtivos, setAgendamentosAtivos] = useState<Agendamento[]>([]);
   const [agendamentosPassados, setAgendamentosPassados] = useState<Agendamento[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter(); // Adicione isso
 
   // Token de autorização Fernet (fictício) – substitua pelo token real obtido no login
   const FERNET_TOKEN = "gAAAAABoFXWOShrofgST8w79AVnOio4TjucW9WajCVVmF-KPDfI6N_wMgTC5F8UqYGlozSIuWYP0efDp9HBzboborsIm8qyNxJ0QOc67i2sIIPRVjbVlKNPFzetDDlPxYXt2Lcm5e3HycFATv7wXZbJiNDzi6kz7lTgs3uKa7ReaU_FocHie_Ks8BY0KUYJbpDfVMT42tJ3NCjFnDgCruMk_Vr01m1uCVQ==";
@@ -74,7 +76,7 @@ export default function AgendamentosPage() {
           const data = await resHistorico.json();
           if (data.status === "success") {
             console.log("Agendamentos passados recebidos do endpoint:", data.agendamentos); // <-- Adicione esta linha
-            setAgendamentosPassados(transformarArrayParaAgendamentos(data.agendamentos || [], "concluido"));
+            setAgendamentosPassados(transformarArrayParaAgendamentos(data.agendamentos || []));
           } else {
             console.error("Erro ao buscar histórico de agendamentos:", data.message);
           }
@@ -109,7 +111,7 @@ export default function AgendamentosPage() {
       );
       if (res.ok) {
         console.log("Agendamento cancelado com sucesso!");
-        setAgendamentosAtivos((prev) => prev.filter((a) => a.id !== id));
+        router.refresh(); // Faz o refresh da página para atualizar os dados
       } else {
         const error = await res.text();
         console.error("Erro ao cancelar agendamento:", error);
@@ -230,6 +232,8 @@ function AgendamentoCard({
                 ? "bg-green-100 text-stone-800 hover:bg-green-200"
                 : agendamento.status === "pendente"
                 ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-200"
+                : agendamento.status === "cancelado"
+                ? "bg-red-100 text-red-800 hover:bg-red-200"
                 : "bg-blue-100 text-blue-800 hover:bg-blue-200"
             }
           >
@@ -237,6 +241,8 @@ function AgendamentoCard({
               ? "Confirmado"
               : agendamento.status === "pendente"
               ? "Pendente"
+              : agendamento.status === "cancelado"
+              ? "Cancelado"
               : "Concluído"}
           </Badge>
         </div>
@@ -272,7 +278,14 @@ function AgendamentoCard({
             <Button
               variant="destructive"
               size="sm"
-              onClick={() => onCancel && onCancel(agendamento.id)}
+              onClick={async () => {
+                if (window.confirm("Tem certeza que deseja cancelar este agendamento?")) {
+                  if (onCancel) {
+                    await onCancel(agendamento.id);
+                    window.location.reload(); // Recarrega a página após o cancelamento
+                  }
+                }
+              }}
             >
               Cancelar
             </Button>
@@ -284,7 +297,7 @@ function AgendamentoCard({
 }
 
 // Função para transformar o array do backend no formato esperado pelo card
-function transformarArrayParaAgendamentos(array: any[], statusPadrao = "confirmado"): Agendamento[] {
+function transformarArrayParaAgendamentos(array: any[]): Agendamento[] {
   let agendamentos: Agendamento[] = [];
   array.forEach((item) => {
     if (item.horas && item.horas.length > 0) {
@@ -296,7 +309,7 @@ function transformarArrayParaAgendamentos(array: any[], statusPadrao = "confirma
         data: item.data,
         horario: item.horas[0].slice(0, 5),
         duracao: item.duracao,
-        status: statusPadrao,
+        status: item.status, // Usa o status real do backend
         valor: undefined,
       });
     }

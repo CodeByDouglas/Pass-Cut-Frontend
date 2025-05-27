@@ -36,7 +36,7 @@ export default function HeaderCliente() {
           {/* Logo */}
           <Link href="/cliente/agendamentos" className="flex items-center space-x-2">
             <Image
-              src="/imagens/logo.png"
+              src="https://github.com/RxTaylin/icon/blob/main/logo.jpeg"
               alt="Logo"
               width={36}
               height={36}

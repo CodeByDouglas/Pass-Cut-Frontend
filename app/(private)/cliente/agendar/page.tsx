@@ -10,72 +10,69 @@ import { CalendarIcon, Check, ChevronRight, Clock, ShoppingCart, User } from "lu
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Calendar } from "@/components/ui/calendar";
 
-// Mock data
-const servicos = [
-  {
-    id: 1,
-    nome: "Corte de Cabelo",
-    descricao: "Corte tradicional com máquina e tesoura",
-    preco: 45.00,
-    duracao: 30,
-    imagem: "https://images.pexels.com/photos/1319461/pexels-photo-1319461.jpeg"
-  },
-  {
-    id: 2,
-    nome: "Barba Completa",
-    descricao: "Modelagem e acabamento completo da barba",
-    preco: 35.00,
-    duracao: 20,
-    imagem: "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg"
-  },
-  {
-    id: 3,
-    nome: "Pacote Completo",
-    descricao: "Corte de cabelo e barba completa",
-    preco: 70.00,
-    duracao: 50,
-    imagem: "https://images.pexels.com/photos/1805600/pexels-photo-1805600.jpeg"
-  },
-  {
-    id: 4,
-    nome: "Corte Degradê",
-    descricao: "Corte com degradê e acabamento perfeito",
-    preco: 50.00,
-    duracao: 40,
-    imagem: "https://images.pexels.com/photos/1570807/pexels-photo-1570807.jpeg"
-  }
+// Remova o array servicos mockado
+
+const imagensServicos = [
+  "https://images.pexels.com/photos/1319461/pexels-photo-1319461.jpeg",
+  "https://images.pexels.com/photos/1813272/pexels-photo-1813272.jpeg",
+  "https://images.pexels.com/photos/1805600/pexels-photo-1805600.jpeg",
+  "https://images.pexels.com/photos/1570807/pexels-photo-1570807.jpeg"
 ];
 
-const profissionais = [
-  {
-    id: 1,
-    nome: "Marcos Oliveira",
-    cargo: "Barbeiro Master",
-    experiencia: "10 anos",
-    disponivel: true,
-    avatar: "https://demo-source.imgix.net/head_shot.jpg?fit=max&w=1584&h=311.375&dpr=1&q=75&auto=format%2Ccompress&cacheID=3434649284"
-  },
-  {
-    id: 2,
-    nome: "Felipe Santos",
-    cargo: "Barbeiro Senior",
-    experiencia: "7 anos",
-    disponivel: true,
-    avatar: "https://demo-source.imgix.net/head_shot.jpg?fit=max&w=1584&h=311.375&dpr=1&q=75&auto=format%2Ccompress&cacheID=3434649284"
-  }
+const imagensColaboradores = [
+  "https://demo-source.imgix.net/bucket_hat.jpg?fit=max&w=1584&h=311.375&dpr=1&q=75&auto=format%2Ccompress",
+  "https://demo-source.imgix.net/head_shot.jpg?fit=max&w=1584&h=311.375&dpr=1&q=75&auto=format%2Ccompress"
 ];
 
 export default function AgendarPage() {
   const router = useRouter();
   const [etapa, setEtapa] = useState<"servico" | "profissional" | "data" | "confirmacao">("servico");
+  const [servicos, setServicos] = useState<any[]>([]);
   const [servicoSelecionado, setServicoSelecionado] = useState<any>(null);
+  const [servicoIdSelecionado, setServicoIdSelecionado] = useState<string | null>(null); // Novo estado
   const [profissionalSelecionado, setProfissionalSelecionado] = useState<any>(null);
+  const [profissionalIdSelecionado, setProfissionalIdSelecionado] = useState<string | null>(null); // Novo estado
   const [dataSelecionada, setDataSelecionada] = useState<string>("");
   const [horarioSelecionado, setHorarioSelecionado] = useState<any>(null);
   const [confirmarDialogAberto, setConfirmarDialogAberto] = useState(false);
   const [horariosDisponiveis, setHorariosDisponiveis] = useState<any[]>([]);
-  const AUTH_TOKEN = "gAAAAABoM7n7ETcN-piSP0jan1HVMuaa4clZwcjdK1QtIK3YZVuPZXNWxAej1MMOlhWiYwt9NxidOC2cnpk_JsOIn-wHy1yit0HeXZFy78S7p4nDzGmK18y15wwijwS9_bbvbbqLZikzK5F8ezjNvesyZ3kqOqpedMsnzpvXNxXAg5-o4p6KjbtZdAPzYQ5LxaYAhLoqO9T3"; // Troque pelo token correto
+  const [colaboradores, setColaboradores] = useState<any[]>([]);
+  const AUTH_TOKEN = "gAAAAABoM7n7ETcN-piSP0jan1HVMuaa4clZwcjdK1QtIK3YZVuPZXNWxAej1MMOlhWiYwt9NxidOC2cnpk_JsOIn-wHy1yit0HeXZFy78S7p4nDzGmK18y15wwijwS9_bbvbbqLZikzK5F8ezjNvesyZ3kqOqpedMsnzpvXNxXAg5-o4p6KjbtZdAPzYQ5LxaYAhLoqO9T3";
+
+  // Buscar serviços do backend sempre que a etapa for "servico"
+  useEffect(() => {
+    if (etapa !== "servico") return;
+    const buscarServicos = async () => {
+      try {
+        const res = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/consultar-servicos", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "gAAAAABoHrwdBTqmT8EH-JDDZcWF3TFoDOdi37LvWpe8YTk0mQLO_M-08KUBMd69rEJpPZAkKex5Vz2OVI5lqu32nfSz8HBGIJ1StD1uB_tPfOpwMiZN0y0yyD9zzy6cfLLqosqYPf1yx0BomDicQ-RWyb7VA5CVTM5_jxIUiN2CoPxbiUWZ97FTL_Y-ydbtSPuZxQKc2YhQWvSpmX6soTPwfdbOuq5egw=="
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          // Corrigido para acessar data.servicos
+          const servicosBackend = (data.servicos || []).map((s: any, idx: number) => ({
+            id: s[0],
+            nome: s[1],
+            descricao: s[2] ?? "",
+            preco: parseFloat(s[3]),
+            duracao: s[4],
+            imagem: imagensServicos[idx % imagensServicos.length]
+          }));
+          setServicos(servicosBackend);
+        }
+      } catch (err) {
+        // Trate o erro conforme necessário
+      }
+    };
+    buscarServicos();
+  }, [etapa]);
 
   useEffect(() => {
     const buscarHorarios = async () => {
@@ -84,24 +81,27 @@ export default function AgendarPage() {
         return;
       }
 
+      // Converte dataSelecionada (dd/mm/yyyy) para yyyy-mm-dd
+      const [dia, mes, ano] = dataSelecionada.split('/');
+      const dataFormatada = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+
       try {
         const res = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/consultar-horarios", {
           method: "POST",
           credentials: "include", // envia cookies HttpOnly
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "gAAAAABoM7n7ETcN-piSP0jan1HVMuaa4clZwcjdK1QtIK3YZVuPZXNWxAej1MMOlhWiYwt9NxidOC2cnpk_JsOIn-wHy1yit0HeXZFy78S7p4nDzGmK18y15wwijwS9_bbvbbqLZikzK5F8ezjNvesyZ3kqOqpedMsnzpvXNxXAg5-o4p6KjbtZdAPzYQ5LxaYAhLoqO9T3",
+            "Authorization": "gAAAAABoH8e87tHoye4BFQH0vlDqKH6IiswiIf5SbVgWO3ZyuommcFhCbHa-Jlsb6hrybFJc-TbuK2uqNEwY_C_PgAeXR62RsgHmyodmT9PHuWJDOlsR5xEpe5a7423tQjErn6xQ07CRiVR1Ia6sthYboXS4CMC-NBy0F8G4zcyufxHLIBOOEhpyh9Kj9OrPUPqgDnIkKx0YsBC2oyhaTDA4HXjp97Dg9g==",
           },
           body: JSON.stringify({
-            servicos: "5a7e3f8d-1234-4abc-9876-9f1234567890",
-            colaborador_id: "5a7e3f8d-1234-4abc-9876-9f1234567890",
-            data: "2025-05-26",
+            servicos: [servicoSelecionado.id],
+            colaborador_id: profissionalSelecionado.id,
+            data: dataFormatada,
           }),
         });
 
         const data = await res.json();
         if (res.status === 200 && data.horarios) {
-          // data.horarios é um array de strings "HH:MM:SS"
           setHorariosDisponiveis(
             data.horarios.map((h: string, idx: number) => ({
               id: idx + 1,
@@ -123,8 +123,10 @@ export default function AgendarPage() {
   // Next step
   const avancarEtapa = () => {
     if (etapa === "servico" && servicoSelecionado) {
+      setServicoIdSelecionado(servicoSelecionado.id);
       setEtapa("profissional");
     } else if (etapa === "profissional" && profissionalSelecionado) {
+      setProfissionalIdSelecionado(profissionalSelecionado.id); // Salva o ID do colaborador selecionado
       setEtapa("data");
     } else if (etapa === "data" && dataSelecionada && horarioSelecionado) {
       setConfirmarDialogAberto(true);
@@ -141,13 +143,79 @@ export default function AgendarPage() {
   };
   
   // Confirm appointment
-  const confirmarAgendamento = () => {
-    // API para salvar o agendamento
-    setConfirmarDialogAberto(false);
-    // Rediceionar para a página de agendamentos
-    router.push("/cliente/agendamentos");
+  const confirmarAgendamento = async () => {
+    if (!servicoSelecionado || !profissionalSelecionado || !dataSelecionada || !horarioSelecionado) return;
+
+    // Converte dataSelecionada (dd/mm/yyyy) para yyyy-mm-dd
+    const [dia, mes, ano] = dataSelecionada.split('/');
+    const dataFormatada = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+    // Garante formato HH:MM:SS
+    const horarioFormatado = horarioSelecionado.hora.length === 5 ? `${horarioSelecionado.hora}:00` : horarioSelecionado.hora;
+
+    try {
+      const res = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/criar-agendamento", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "gAAAAABoNRjyiPWUyyn7GXv1LzKqeZ5Po0QlP4yv2RZYesirZMc2kBRaTrOlGWCvat9mcVmd7OkdHVtkTUB3s7ZfmXtTeyw9SuRWmPvNFc9N8S4GqLLys5JSojUkvJ0wTwa3NMnynI4RdO4gO8H9lNk6dvOM4peerux9q3f9gMZ5JX3g1L470YWhrkXAum0ePdnFoF662Qfh",
+        },
+        body: JSON.stringify({
+          servicos: [servicoSelecionado.id],
+          colaborador_id: profissionalSelecionado.id,
+          data: dataFormatada,
+          horario: horarioFormatado,
+        }),
+      });
+
+      if (res.status === 200) {
+        // Limpa os dados e redireciona
+        setServicoSelecionado(null);
+        setProfissionalSelecionado(null);
+        setDataSelecionada("");
+        setHorarioSelecionado(null);
+        setConfirmarDialogAberto(false);
+        router.push("/cliente/agendamentos");
+      } else if (res.status === 204) {
+        alert("Infelizmente o horário solicitado acabou de ser preenchido e não está mais disponível");
+        setConfirmarDialogAberto(false);
+      }
+    } catch (err) {
+      alert("Erro ao tentar registrar o agendamento. Tente novamente.");
+    }
   };
   
+  useEffect(() => {
+    if (etapa === "profissional") {
+      fetchColaboradores();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [etapa]);
+
+  const fetchColaboradores = async () => {
+    try {
+      const res = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/consultar-colaborador", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "gAAAAABoHtfb2edaSSMRZiWzRm3AoYyZdKG_lBi4LEbZrC1wCJWLG-AG5GxqQjp45gjUZ4-COPBkiaOjxEYfD8H4KLQyX-y2gjl4kRHmStqn1zGkDZtod-mIimVhrfpVuAv_XS9HaQG8GTrWac6wqpSZQbTI2r4sYoCnI-W--SZGIgyvLPGQETc="
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const colaboradoresBackend = (data.servicos || []).map((c: any, idx: number) => ({
+          id: c[0],
+          nome: c[1],
+          avatar: imagensColaboradores[idx % imagensColaboradores.length]
+        }));
+        setColaboradores(colaboradoresBackend);
+      }
+    } catch (err) {
+      // Trate o erro conforme necessário
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 md:p-6">
       <div className="mb-8">
@@ -182,7 +250,7 @@ export default function AgendarPage() {
                 key={servico.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
                   servicoSelecionado?.id === servico.id 
-                    ? "border-2 border-sky-500" 
+                    ? "border-2 border-stone-500" 
                     : ""
                 }`}
                 onClick={() => setServicoSelecionado(servico)}
@@ -202,8 +270,8 @@ export default function AgendarPage() {
                       <div className="flex justify-between items-start">
                         <CardTitle>{servico.nome}</CardTitle>
                         {servicoSelecionado?.id === servico.id && (
-                          <div className="h-6 w-6 rounded-full bg-sky-100 flex items-center justify-center">
-                            <Check className="h-4 w-4 text-sky-600" />
+                          <div className="h-6 w-6 rounded-full bg-stone-100 flex items-center justify-center">
+                            <Check className="h-4 w-4 text-stone-600" />
                           </div>
                         )}
                       </div>
@@ -243,12 +311,12 @@ export default function AgendarPage() {
         <div className="animate-in slide-in-from-right">
           <h2 className="text-xl font-semibold mb-4">Escolha o profissional</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {profissionais.map((profissional) => (
+            {colaboradores.map((profissional) => (
               <Card 
                 key={profissional.id}
                 className={`cursor-pointer transition-all hover:shadow-md ${
                   profissionalSelecionado?.id === profissional.id 
-                    ? "border-2 border-sky-500" 
+                    ? "border-2 border-stone-500" 
                     : ""
                 }`}
                 onClick={() => setProfissionalSelecionado(profissional)}
@@ -260,20 +328,18 @@ export default function AgendarPage() {
                       alt={profissional.nome}
                       width={80}
                       height={80}
-                      className="object-cover w-full h-full rounded-full"
+                      className="object-cover h-full rounded-full"
                     />
                   </div>
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold">{profissional.nome}</h3>
-                    <p className="text-sm text-gray-500">{profissional.cargo}</p>
-                    <p className="text-sm text-gray-500">Experiência: {profissional.experiencia}</p>
-                    <Badge className="mt-2 bg-sky-100 text-sky-800 hover:bg-sky-200">
+                    <Badge className="mt-2 bg-stone-100 text-stone-800 hover:bg-stone-200">
                       Disponível hoje
                     </Badge>
                   </div>
                   {profissionalSelecionado?.id === profissional.id && (
-                    <div className="h-8 w-8 rounded-full bg-sky-100 flex items-center justify-center">
-                      <Check className="h-5 w-5 text-sky-600" />
+                    <div className="h-8 w-8 rounded-full bg-stone-100 flex items-center justify-center">
+                      <Check className="h-5 w-5 text-stone-600" />
                     </div>
                   )}
                 </div>
@@ -311,35 +377,20 @@ export default function AgendarPage() {
                 <CardTitle className="text-lg">Selecione a data</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 gap-2">
-                  {Array.from({ length: 9 }, (_, i) => {
-                    const date = new Date();
-                    date.setDate(date.getDate() + i);
-                    return date;
-                  }).map((date, index) => {
-                    const dayStr = date.toLocaleDateString('pt-BR', { day: 'numeric' });
-                    const weekdayStr = date.toLocaleDateString('pt-BR', { weekday: 'short' }).substring(0, 3);
-                    const fullDateStr = date.toLocaleDateString('pt-BR');
-                    
-                    return (
-                      <Button
-                        key={index}
-                        variant={dataSelecionada === fullDateStr ? "default" : "outline"}
-                        className={`flex flex-col h-16 ${
-                          dataSelecionada === fullDateStr ? "bg-sky-600 hover:bg-sky-700" : ""
-                        }`}
-                        onClick={() => {
-                          setDataSelecionada(fullDateStr);
-                          setHorarioSelecionado(null);
-                        }}
-                      >
-                        <span className="text-xs">{weekdayStr}</span>
-                        <span className="text-lg">{dayStr}</span>
-                      </Button>
-                    );
-                  })}
-                </div>
-                
+                <Calendar
+                  mode="single"
+                  selected={dataSelecionada ? new Date(dataSelecionada.split('/').reverse().join('-')) : undefined}
+                  onSelect={(date) => {
+                    if (date) {
+                      // Formata para dd/mm/yyyy
+                      const formatted = date.toLocaleDateString('pt-BR');
+                      setDataSelecionada(formatted);
+                      setHorarioSelecionado(null);
+                    }
+                  }}
+                  fromDate={new Date()}
+                  className="rounded-md border"
+                />
                 <div className="mt-4">
                   <div className="flex items-center text-gray-500 text-sm">
                     <CalendarIcon className="h-4 w-4 mr-2" />

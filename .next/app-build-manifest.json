@@ -26,15 +26,26 @@
       "static/chunks/main-app.js",
       "static/chunks/app/(private)/cliente/agendamentos/page.js"
     ],
-    "/(private)/cliente/perfil/page": [
+    "/(private)/cliente/agendar/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/(private)/cliente/perfil/page.js"
+      "static/css/app/(private)/cliente/agendar/page.css",
+      "static/chunks/app/(private)/cliente/agendar/page.js"
     ],
     "/(private)/cliente/assinaturas/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/(private)/cliente/assinaturas/page.js"
+    ],
+    "/(private)/cliente/planos/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(private)/cliente/planos/page.js"
+    ],
+    "/(private)/cliente/perfil/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(private)/cliente/perfil/page.js"
     ],
     "/_not-found/page": [
       "static/chunks/webpack.js",

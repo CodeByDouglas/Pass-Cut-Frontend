@@ -1,14 +1,16 @@
-// app/(public)/page.tsx
+'use client'  // ← ESSENCIAL para usar hooks React nesse arquivo
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 
-// Client Component aninhado para lógica que depende de hooks cliente
-function RedirectClient({ nome, IDbase }: { nome: string; IDbase: string }) {
-  'use client'
-
+export default function HomePage() {
+  const searchParams = useSearchParams()
   const router = useRouter()
+
+  const nome = searchParams.get('nome') ?? ''
+  const IDbase = searchParams.get('IDbase') ?? ''
+
   const [status, setStatus] = useState<'loading' | 'error'>('loading')
   const [error, setError] = useState('')
 
@@ -64,18 +66,5 @@ function RedirectClient({ nome, IDbase }: { nome: string; IDbase: string }) {
       <p className="text-red-600 mb-4">❌ {error}</p>
       <Button onClick={() => router.push('/')}>Voltar</Button>
     </div>
-  )
-}
-
-// Server Component principal (página raiz)
-export default function HomePage({ searchParams }: { searchParams: URLSearchParams }) {
-  // lê query params direto do SSR
-  const nome = searchParams.get('nome') ?? ''
-  const IDbase = searchParams.get('IDbase') ?? ''
-
-  return (
-    <main>
-      <RedirectClient nome={nome} IDbase={IDbase} />
-    </main>
   )
 }

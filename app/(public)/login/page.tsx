@@ -23,7 +23,7 @@ export default function LoginPage() {
     setLoading(true);
     setErroLogin("");
     try {
-      const ENDPOINT = "https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/api/autenticar_user";
+      const ENDPOINT = "https://codebydouglas.pythonanywhere.com/api/autenticar_user";
       const FERNET_TOKEN = "gAAAAABoMq5-Akg8Nzut-mkdgopFmlHbDtamCEA4NPGLRM4etW0z37hQFf7sGCpN13FJtZwR8deTONj0LkgAr2X2ch2Sdx1CNL8dId8CGR_6xclXZXd24jaaPZKyl-yb6wFgWj2TIuzFya95MxsOJhL1Ivdr-OUILATCMlWviAgCnQ-s2vRcI61dTzVkupDOKgK1ULUhlPRlZRaBLuCNSxbpIECUuiGmSw==";
 
       const res = await fetch(ENDPOINT, {

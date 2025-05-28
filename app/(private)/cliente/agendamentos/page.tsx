@@ -37,7 +37,7 @@ export default function AgendamentosPage() {
     const consultarAgendamentos = async () => {
       try {
         // Buscar agendamentos ativos
-        const resAtivos = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/api/consultar_agendamentos", {
+        const resAtivos = await fetch("https://codebydouglas.pythonanywhere.com/api/consultar_agendamentos", {
           method: "POST",
           credentials: "include",
           headers: {
@@ -63,7 +63,7 @@ export default function AgendamentosPage() {
 
       try {
         // Buscar histórico de agendamentos
-        const resHistorico = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/api/consultar_agendamentos", {
+        const resHistorico = await fetch("https://codebydouglas.pythonanywhere.com/api/consultar_agendamentos", {
           method: "POST",
           credentials: "include",
           headers: {
@@ -98,7 +98,7 @@ export default function AgendamentosPage() {
   const cancelarAgendamento = async (id: string) => {
     try {
       const res = await fetch(
-        "https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/cancelar-agendamento",
+        "https://codebydouglas.pythonanywhere.com/cancelar-agendamento",
         {
           method: "POST",
           credentials: "include",

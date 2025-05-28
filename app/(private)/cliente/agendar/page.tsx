@@ -48,7 +48,7 @@ export default function AgendarPage() {
     if (etapa !== "servico") return;
     const buscarServicos = async () => {
       try {
-        const res = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/consultar-servicos", {
+        const res = await fetch("https://codebydouglas.pythonanywhere.com/consultar-servicos", {
           method: "POST",
           credentials: "include",
           headers: {
@@ -87,7 +87,7 @@ export default function AgendarPage() {
       const dataFormatada = dataSelecionada.toISOString().split('T')[0];
 
       try {
-        const res = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/consultar-horarios", {
+        const res = await fetch("https://codebydouglas.pythonanywhere.com/consultar-horarios", {
           method: "POST",
           credentials: "include", // envia cookies HttpOnly
           headers: {
@@ -152,7 +152,7 @@ export default function AgendarPage() {
     const horarioFormatado = horarioSelecionado.hora.length === 5 ? `${horarioSelecionado.hora}:00` : horarioSelecionado.hora;
 
     try {
-      const res = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/criar-agendamento", {
+      const res = await fetch("https://codebydouglas.pythonanywhere.com/criar-agendamento", {
         method: "POST",
         credentials: "include",
         headers: {
@@ -193,7 +193,7 @@ export default function AgendarPage() {
 
   const fetchColaboradores = async () => {
     try {
-      const res = await fetch("https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/consultar-colaborador", {
+      const res = await fetch("https://codebydouglas.pythonanywhere.com/consultar-colaborador", {
         method: "POST",
         credentials: "include",
         headers: {

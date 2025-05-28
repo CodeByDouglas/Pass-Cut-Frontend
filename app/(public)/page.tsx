@@ -26,7 +26,7 @@ export default function HomePage() {
     const doRedirecionamento = async () => {
       try {
         const res = await fetch(
-          'https://jubilant-adventure-q79vr767pj7pf4v66-5000.app.github.dev/api/redirecionamento_inicial',
+          'https://https://codebydouglas.pythonanywhere.com/api/redirecionamento_inicial',
           {
             method: 'POST',
             credentials: 'include', // ⬅️ importantíssimo para cookies HttpOnly

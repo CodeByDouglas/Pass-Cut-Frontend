@@ -16,21 +16,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/(public)/login/page.js"
     ],
-    "/(private)/cliente/agendamentos/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(private)/cliente/agendamentos/page.js"
-    ],
-    "/(private)/cliente/agendar/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/(private)/cliente/agendar/page.css",
-      "static/chunks/app/(private)/cliente/agendar/page.js"
-    ],
     "/(private)/cliente/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/(private)/cliente/layout.js"
+    ],
+    "/(private)/cliente/agendamentos/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(private)/cliente/agendamentos/page.js"
     ]
   }
 }

@@ -57,11 +57,11 @@ export default function LoginPage() {
       <Card className="max-w-md w-full bg-white text-stone-900">
         <CardHeader className="text-center">
           <img
-            src="https://raw.githubusercontent.com/RxTaylin/icon/refs/heads/main/PASS%20CUT%20LOGO%20PNG%20OFC.png"
+            src="https://raw.githubusercontent.com/RxTaylin/icon/refs/heads/main/logo.jpeg"
             alt="Logo Passcut"
             width={100}
             height={100}
-            className="mx-auto mb-1"
+            className="mx-auto mb-1 rounded-full"
           />
           <CardTitle className="text-2xl">Bem-vindo ao Passcut</CardTitle>
           <CardDescription>Faça login para acessar sua conta</CardDescription>
